@@ -70,7 +70,7 @@ namespace AronParker.Hkdf.Tests
                 Assert.Equal(expectedPrk, actualPrk);
 
                 var actualOkm = hkdf.Expand(actualPrk, len, info);
-                
+
                 Assert.Equal(expectedOkm, actualOkm);
             }
         }
@@ -86,7 +86,7 @@ namespace AronParker.Hkdf.Tests
 
             var expectedPrk = StringToByteArray("19ef24a32c717b167f33a91d6f648bdf96596776afdb6377ac434c1c293ccb04");
             var expectedOkm = StringToByteArray("8da4e775a563c18f715f802a063c5a31b8a11f5c5ee1879ec3454e5f3c738d2d9d201395faa4b61a96c8");
-            
+
             using (var hkdf = new Hkdf(hash))
             {
                 var actualPrk = hkdf.Extract(ikm, salt);
@@ -214,6 +214,31 @@ namespace AronParker.Hkdf.Tests
 
                 var actualOkm = hkdf.Expand(actualPrk, len, info);
 
+                Assert.Equal(expectedOkm, actualOkm);
+            }
+        }
+
+        [Fact]
+        public void TestCase7_IterationStart0()
+        {
+            var hash = HashAlgorithmName.SHA1;
+            var ikm = StringToByteArray("0c0c0c0c0c0c0c0c0c0c0c0c0c0c0c0c0c0c0c0c0c0c");
+            var salt = (byte[])null;
+            var info = Array.Empty<byte>();
+            var len = 42;
+
+            var expectedPrk = StringToByteArray("2adccada18779e7c2077ad2eb19d3f3e731385dd");
+            var expectedOkm = StringToByteArray("17d716602440c30e35f7e3cae277b4b0" +
+                                                "5938eed7c07552f3d205c19e9e3c87f7" +
+                                                "7a2b86b1b1d1187e0288");
+
+            using (var hkdf = new Hkdf(hash, 0))
+            {
+                var actualPrk = hkdf.Extract(ikm, salt);
+
+                Assert.Equal(expectedPrk, actualPrk);
+
+                var actualOkm = hkdf.Expand(actualPrk, len, info);
                 Assert.Equal(expectedOkm, actualOkm);
             }
         }

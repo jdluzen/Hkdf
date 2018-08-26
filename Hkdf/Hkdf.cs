@@ -10,11 +10,11 @@ namespace AronParker.Hkdf
     {
         private HMAC _hmac;
         private HashAlgorithmName _hashAlgorithm;
-
+        private readonly byte iterationStart;
         private byte[] _tInfoN;
         private bool _disposed = false;
 
-        public Hkdf(HashAlgorithmName hashAlgorithm)
+        public Hkdf(HashAlgorithmName hashAlgorithm, byte iterationStart = 1)
         {
             switch (hashAlgorithm.Name)
             {
@@ -38,6 +38,7 @@ namespace AronParker.Hkdf
             }
 
             _hashAlgorithm = hashAlgorithm;
+            this.iterationStart = iterationStart;
         }
 
         public int HashLength { get; }
@@ -93,7 +94,7 @@ namespace AronParker.Hkdf
             var result = new byte[length];
             var offset = 0;
 
-            var n = 1;
+            var n = iterationStart;
             var tInfoNOffset = HashLength;
 
             Array.Copy(info, 0, _tInfoN, HashLength, info.Length);
